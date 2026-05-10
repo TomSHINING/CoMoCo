@@ -12,7 +12,7 @@ from models.Simple_Unet import UNet_Dual_Decoder as simple_unet_dual_decoder
 from models.Simple_Unet import MotionMapNet
 import os
 
-# 强制使用第 0 块 GPU（单卡）
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 t_config = config.get_config()
@@ -33,12 +33,12 @@ def get_t_and_d(bs, device):
     return t, d
 
 
-# 单卡训练函数（不再需要 rank/world_size）
+
 def train_single_gpu():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
-    # 日志设置（仅主进程，现在就是唯一进程）
+
     now_time = datetime.now()
     time_str = datetime.strftime(now_time, '%m-%d_%H-%M-%S')
     log_dir = os.path.join(t_config.ResultPath, time_str)
@@ -53,7 +53,7 @@ def train_single_gpu():
     motion_net.load_state_dict(motion_ckpt['state_dict'])
     motion_net.eval()
 
-    # 模型定义
+
     model = simple_unet_dual_decoder(
         ch=32,
         ch_mult=[1, 2, 4, 8],
@@ -76,7 +76,7 @@ def train_single_gpu():
         gamma=t_config.Gamma
     )
 
-    # 加载 checkpoint（如果存在）
+
     if os.path.exists(t_config.ModelSaveDir):
         latest_file = find_lastest_file(t_config.ModelSaveDir)
         if latest_file:
@@ -85,7 +85,7 @@ def train_single_gpu():
             optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
             print('Loaded checkpoint successfully!')
 
-    # 数据集加载
+
     with open('/home/lintong/Supervised_flow/data/tiny_motion_list.txt', 'r') as f:
         data_list = [line.strip() for line in f.readlines()]
 
@@ -111,7 +111,7 @@ def train_single_gpu():
             image_shape=t_config.ImageShape
         )
 
-    # 单卡用普通 DataLoader，shuffle=True
+
     train_loader = DataLoader(
         train_dataset,
         batch_size=t_config.TrainBatchSize,
@@ -161,7 +161,7 @@ def train_single_gpu():
                 loss_restored = MSE(restored_x0, x)
                 loss = loss_denoise + loss_restored
             else:
-                # FMK 部分（保持原逻辑）
+
                 x_fm = x_t[:t_config.FMKBatchSize]
                 s_target_1 = x[:t_config.FMKBatchSize] - guassian_noise[:t_config.FMKBatchSize]
                 with torch.no_grad():
@@ -182,7 +182,7 @@ def train_single_gpu():
                 s_target = torch.cat([s_target_1, s_target_2], dim=0)
                 pred_s = model(x_cat, t[:, 0, 0, 0], cond, sparse_phi, d[:, 0, 0, 0] * 2)
                 loss = MSE(s_target, pred_s)
-                # 注意：此时 loss_denoise/loss_restored 未定义，避免记录
+
                 meter_denoise.update(0)
                 meter_restored.update(0)
 
@@ -197,7 +197,6 @@ def train_single_gpu():
 
         scheduler.step()
 
-        # 保存模型 & 写日志（每轮都做）
         if epoch % 10 ==0:
             save_model(model, optimizer, epoch + 1, t_config.ModelSaveDir)
         writer.add_scalars('train loss/flow', {'train_flow_loss': meter_flow.avg}, epoch + 1)
@@ -205,7 +204,6 @@ def train_single_gpu():
             writer.add_scalars('train loss/IR', {'train_denoised_loss': meter_denoise.avg}, epoch + 1)
             writer.add_scalars('train loss/IR', {'train_restored_loss': meter_restored.avg}, epoch + 1)
 
-        # 可视化（取第一个样本）
         writer.add_image('train img/x img', normalization(x[0]), epoch + 1)
         writer.add_image('train img/x_t img', normalization(x_t[0]), epoch + 1)
         if t_config.use_cond:
@@ -223,5 +221,4 @@ if __name__ == "__main__":
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(42)
 
-    # 直接调用单卡训练
     train_single_gpu()
