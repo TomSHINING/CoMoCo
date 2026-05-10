@@ -148,7 +148,7 @@ class MixPairedImageDataset(Dataset):
         self.restored_cond = restored_cond
         self.input_dirs = input_dirs
 
-        # 将 (file_name, input_dir) 展开成新的索引列表
+   
         self.samples = []
         for fname in data_list:
             for idir in input_dirs:
@@ -177,7 +177,6 @@ class MixPairedImageDataset(Dataset):
             label = torch.FloatTensor(label).reshape(1, *self.image_shape)
             input_img = torch.FloatTensor(input_img).reshape(1, *self.image_shape)
 
-            # clamp 到 [-1, 1]
             label = torch.clamp(label, -1, 1)
             input_img = torch.clamp(input_img, -1, 1)
 
