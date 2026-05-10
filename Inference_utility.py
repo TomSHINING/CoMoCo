@@ -4,13 +4,6 @@ from models.Simple_Unet import MotionMapNet
 from utils import find_lastest_file, load_model
 
 
-# 全局变量用于缓存模型，避免重复加载
-_MODEL_CACHE = {}
-
-
-
-
-# 全局缓存，避免重复加载权重
 _MODEL_CACHE = {}
 
 
