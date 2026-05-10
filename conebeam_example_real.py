@@ -136,7 +136,6 @@ def main():
     n_control = 150
     n_time = 300
 
-    # 控制点（可学习参数）
     control_angles = torch.zeros(n_control, 3, device=device, requires_grad=True)
     control_translation = torch.zeros(n_control, 3, 1, device=device, requires_grad=True)
 
@@ -146,28 +145,26 @@ def main():
     theta_x, theta_y, theta_z = angles[:, 0], angles[:, 1], angles[:, 2]
     #print(theta_x,theta_y,theta_z)
 
-    # 构造绕 X 轴的旋转矩阵 Rx（此时 cos(0)=1, sin(0)=0 → 单位矩阵）
     Rx = torch.eye(3, device=device).unsqueeze(0).repeat(300, 1, 1)
     Rx[:, 1, 1] = torch.cos(theta_x)
     Rx[:, 1, 2] = -torch.sin(theta_x)
     Rx[:, 2, 1] = torch.sin(theta_x)
     Rx[:, 2, 2] = torch.cos(theta_x)
 
-    # 构造绕 Y 轴的旋转矩阵 Ry
     Ry = torch.eye(3, device=device).unsqueeze(0).repeat(300, 1, 1)
     Ry[:, 0, 0] = torch.cos(theta_y)
     Ry[:, 0, 2] = torch.sin(theta_y)
     Ry[:, 2, 0] = -torch.sin(theta_y)
     Ry[:, 2, 2] = torch.cos(theta_y)
 
-    # 构造绕 Z 轴的旋转矩阵 Rz
+
     Rz = torch.eye(3, device=device).unsqueeze(0).repeat(300, 1, 1)
     Rz[:, 0, 0] = torch.cos(theta_z)
     Rz[:, 0, 1] = -torch.sin(theta_z)
     Rz[:, 1, 0] = torch.sin(theta_z)
     Rz[:, 1, 1] = torch.cos(theta_z)
 
-    # 合并旋转（此时 R = I @ I @ I = I）
+
     rotation = Rz @ Ry @ Rx  # shape: (400, 3, 3)
 
 
@@ -216,28 +213,28 @@ def main():
         theta_x = angles[:, 0]
         theta_y = angles[:, 1]
         theta_z = angles[:, 2]
-        # 构造绕 X 轴的旋转矩阵 Rx（此时 cos(0)=1, sin(0)=0 → 单位矩阵）
+
         Rx = torch.eye(3, device=device).unsqueeze(0).repeat(300, 1, 1)
         Rx[:, 1, 1] = torch.cos(theta_x)
         Rx[:, 1, 2] = -torch.sin(theta_x)
         Rx[:, 2, 1] = torch.sin(theta_x)
         Rx[:, 2, 2] = torch.cos(theta_x)
 
-        # 构造绕 Y 轴的旋转矩阵 Ry
+
         Ry = torch.eye(3, device=device).unsqueeze(0).repeat(300, 1, 1)
         Ry[:, 0, 0] = torch.cos(theta_y)
         Ry[:, 0, 2] = torch.sin(theta_y)
         Ry[:, 2, 0] = -torch.sin(theta_y)
         Ry[:, 2, 2] = torch.cos(theta_y)
 
-        # 构造绕 Z 轴的旋转矩阵 Rz
+
         Rz = torch.eye(3, device=device).unsqueeze(0).repeat(300, 1, 1)
         Rz[:, 0, 0] = torch.cos(theta_z)
         Rz[:, 0, 1] = -torch.sin(theta_z)
         Rz[:, 1, 0] = torch.sin(theta_z)
         Rz[:, 1, 1] = torch.cos(theta_z)
 
-        # 合并旋转（此时 R = I @ I @ I = I）
+
         rotation = Rz @ Ry @ Rx  # shape: (400, 3, 3)
 
 
@@ -254,7 +251,7 @@ def main():
 
         #loss = loss_fn(pred, target_recon)
         loss = loss_fn(pred[45:50,:,:], target_recon[45:50,:,:])
-        losses.append(loss.item())  # 记录每个迭代的loss值
+        losses.append(loss.item())  
         print('loss:',loss.item())
         loss.backward()
         optimizer_translation.step()
