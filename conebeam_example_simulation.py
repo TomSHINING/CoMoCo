@@ -217,11 +217,11 @@ def main():
 
     loss_fn = MSELoss()
 
-    start_time = time.time()  # 2. 开始记录总时间
+    start_time = time.time()  
     # === Optimization ===
     for i in range(n_iter):
         print('n_iter',i)
-        iter_start = time.time()  # 3. 记录单次迭代开始
+        iter_start = time.time()  
         optimizer_angles.zero_grad()
         optimizer_translation.zero_grad()
 
@@ -232,28 +232,28 @@ def main():
         theta_x = angles[:, 0]
         theta_y = angles[:, 1]
         theta_z = angles[:, 2]
-        # 构造绕 X 轴的旋转矩阵 Rx（此时 cos(0)=1, sin(0)=0 → 单位矩阵）
+        
         Rx = torch.eye(3, device=device).unsqueeze(0).repeat(400, 1, 1)
         Rx[:, 1, 1] = torch.cos(theta_x)
         Rx[:, 1, 2] = -torch.sin(theta_x)
         Rx[:, 2, 1] = torch.sin(theta_x)
         Rx[:, 2, 2] = torch.cos(theta_x)
 
-        # 构造绕 Y 轴的旋转矩阵 Ry
+       
         Ry = torch.eye(3, device=device).unsqueeze(0).repeat(400, 1, 1)
         Ry[:, 0, 0] = torch.cos(theta_y)
         Ry[:, 0, 2] = torch.sin(theta_y)
         Ry[:, 2, 0] = -torch.sin(theta_y)
         Ry[:, 2, 2] = torch.cos(theta_y)
 
-        # 构造绕 Z 轴的旋转矩阵 Rz
+        
         Rz = torch.eye(3, device=device).unsqueeze(0).repeat(400, 1, 1)
         Rz[:, 0, 0] = torch.cos(theta_z)
         Rz[:, 0, 1] = -torch.sin(theta_z)
         Rz[:, 1, 0] = torch.sin(theta_z)
         Rz[:, 1, 1] = torch.cos(theta_z)
 
-        # 合并旋转（此时 R = I @ I @ I = I）
+        
         rotation = Rz @ Ry @ Rx  # shape: (400, 3, 3)
 
 
