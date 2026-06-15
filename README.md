@@ -4,8 +4,6 @@ A high-performance, end-to-end **differentiable CT backprojection reconstruction
 
 ## 🌟 Key Features
 
-- **Fully Differentiable**: Custom `torch.autograd.Function` implementations for fan-beam and cone-beam backprojection operators, enabling exact analytical gradient computation.
-- **CUDA Hardware Acceleration**: Core forward projection sampling and backward error propagation loops are written in **Numba CUDA**, combining GPU-native performance with Pythonic flexibility.
 - **Parametric Geometric Optimization**: Supports direct gradient-based optimization of both 3x4 cone-beam projection matrices and explicit physical parameters (Angles, DSD, DSI, detector shifts).
 - **Deep Learning Prior Integration (AI + Physics)**: Features an interleaved optimization interface compatible with **OT-CFM (Optimal Transport Conditional Flow Matching)** generative models, enabling self-supervised artifact correction guided by advanced data-driven priors.
 
@@ -13,7 +11,10 @@ A high-performance, end-to-end **differentiable CT backprojection reconstruction
 
 ## 📂 Repository Structure
 
-```text
+```text 
+models                          # models
+config                          # config
+up_parameter_small_detector     # Geometrical parameters of our WB-CBCT
 ├── backprojector_fan.py        # 2D differentiable fan-beam backprojector (PyTorch + Numba CUDA)
 ├── backprojector_cone.py       # 3D differentiable cone-beam backprojector (PyTorch + Numba CUDA)
 ├── geometry.py                 # Configuration class defining reconstruction volume and detector parameters
@@ -23,4 +24,8 @@ A high-performance, end-to-end **differentiable CT backprojection reconstruction
 ├── conebeam_example_real.py    # Rigid motion artifact correction workflow on real specimen data (e.g., bone scans)
 ├── conebeam_example_simulation.py # Joint physics-AI optimization using simulated data and OT-CFM priors
 ├── Inference_utility.py        # Inference pipeline wrapper for the OT-CFM network (MotionMapNet + Dual-Decoder UNet)
-└── dataload.py                 # PyTorch Dataset implementations for loading 2D/3D .tif medical images
+├── dataload.py                 # PyTorch Dataset implementations for loading 2D/3D .tif medical images
+├── train_MADN.py               # train_MADN
+├── train_motionUnet.py         # train_motionUnet
+└── dataload.py                 # dataloader
+
