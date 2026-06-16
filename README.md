@@ -35,6 +35,6 @@ up_parameter_small_detector     # Geometrical parameters of our WB-CBCT
 This project acknowledges and benefits from the following open-source repositories and academic works:
 
 * **Motion Artifact Simulation**: The generation of our paired motion artifact simulation dataset was implemented using the Taichi-based forward/backward projection reconstruction framework (utilizing projection matrices) from [SEU-CT-Recon/Reconstruction_program_taichi](https://github.com/SEU-CT-Recon/Reconstruction_program_taichi).
-* **Differentiable Backprojector**: The design and optimization methodology of our differentiable backprojection operators are referenced from and inspired by the following work:
+* **Differentiable Backprojector**: The design of our differentiable backprojection operators are referenced from the following work:
   > Thies, M., Wagner, F., Maul, N., Yu, H., Goldmann, M., Schneider, L.S., Gu, M., Mei, S., Folle, L., Preuhs, A., et al. (2024). **A gradient-based approach to fast and accurate head motion compensation in cone-beam ct.** *IEEE Transactions on Medical Imaging*, 44(2), 1098–1109.
 
