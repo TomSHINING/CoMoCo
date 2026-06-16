@@ -28,7 +28,7 @@ up_parameter_small_detector     # Geometrical parameters of our WB-CBCT
 ├── train_MADN.py               # train_MADN
 ├── train_motionUnet.py         # train_motionUnet
 └── dataload.py                 # dataloader
-
+---
 
 ## 🙏 Acknowledgements
 
